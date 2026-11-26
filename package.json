@@ -1,0 +1,5 @@
+{
+    "name": "yaya-food",
+    "private": true,
+    "workspaces": ["apps/*"]
+}
