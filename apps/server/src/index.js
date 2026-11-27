@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const sellerRoutes = require('./routes/seller.routes');
+const checkoutRoutes = require('./routes/checkout.routes');
 
 const publicRoutes = require('./routes/public.routes');
 const authRoutes = require('./routes/auth.routes');
@@ -26,6 +27,7 @@ app.get('/api/v1/health', (req, res) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1', publicRoutes);
 app.use('/api/v1/seller', sellerRoutes);
+app.use('/api/v1/orders', checkoutRoutes);
 
 app.use((err, req, res, next)=> {
     console.error(err);

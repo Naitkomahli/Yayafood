@@ -1,7 +1,7 @@
 const express = require("express");
 const pool = require("../db/pool");
 const { sendSuccess, sendError } = require("../utils/response");
-const { getOptionByProductIds, formatProduct } = require('../utils/catalog');
+const { getOptionsByProductIds, formatProduct } = require('../utils/catalog');
 const router = express.Router();
 
 // Helper: ambil optionGroups & values untuk daftar productId sekaligus (hindari N+1 query)

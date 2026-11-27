@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+  --color-cream: #F8EFE6;
+  --color-cream-sunk: #F1E3D6;
+  --color-ink: #512C20;
+  --color-ink-soft: #6E4A3A;
+  --color-terracotta: #B86F58;
+  --color-terracotta-deep: #8F4A35;
+  --color-pink: #E7C9B9;
+  --color-olive-deep: #5A6B47;
+  --color-paper: #FFFDF9;
+  --color-line: #E6D6C7;
+
+  --font-display: "Montserrat", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
