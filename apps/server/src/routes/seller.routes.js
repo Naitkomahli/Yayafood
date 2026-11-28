@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path');
+const multer = require('multer');
 const { z } = require('zod');
 const pool = require('../db/pool');
 const { sendSuccess, sendError } = require('../utils/response');
@@ -7,6 +9,40 @@ const { getOptionsByProductIds, formatProduct } = require('../utils/catalog');
 
 const router = express.Router();
 router.use(requireSeller);
+
+const uploadStorage = multer.diskStorage({
+  destination: path.join(__dirname, '../../uploads'),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const base = path.basename(file.originalname, ext).replace(/[^a-z0-9-_]/gi, '-').slice(0, 40);
+    cb(null, `${Date.now()}-${base}${ext}`);
+  },
+});
+
+const upload = multer({
+  storage: uploadStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.mimetype)) {
+      return cb(new Error('Only JPG, PNG, or WebP images are allowed'));
+    }
+    return cb(null, true);
+  },
+});
+
+router.post('/upload', (req, res) => {
+  upload.single('image')(req, res, (err) => {
+    if (err) {
+      return sendError(res, err.message || 'Image upload failed', 400);
+    }
+    if (!req.file) {
+      return sendError(res, 'Image file is required', 400);
+    }
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    return sendSuccess(res, { imageUrl }, 'Image uploaded', 201);
+  });
+});
 
 const uuidSchema = z.string().uuid();
 

@@ -66,3 +66,18 @@ export const deleteOptionValue = (id) =>
 export const getSellerSettings = () => request('/seller/settings');
 export const updateSellerSettings = (body) =>
   request('/seller/settings', { method: 'PUT', body: JSON.stringify(body) });
+
+export async function uploadProductImage(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+  const res = await fetch(`${API_BASE}/seller/upload`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok || !json?.success) {
+    throw new Error(json?.message || 'Upload gambar gagal');
+  }
+  return json.data.imageUrl;
+}

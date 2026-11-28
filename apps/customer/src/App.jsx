@@ -111,6 +111,9 @@ export default function App() {
     }
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const heroProduct =
+    products.find((p) => p.slug === 'nasi-ayam-geprek' && p.imageUrl) ||
+    products.find((p) => p.imageUrl);
 
   return (
     <div className="min-h-screen bg-cream text-ink">
@@ -120,7 +123,7 @@ export default function App() {
       />
 
       <main>
-        <Hero />
+        <Hero heroProduct={heroProduct} />
 
         <MenuSection
           categories={categories}

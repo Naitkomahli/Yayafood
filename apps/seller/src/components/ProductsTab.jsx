@@ -8,6 +8,7 @@ import {
   deleteOptionValue,
   formatRupiah,
   updateProduct,
+  uploadProductImage,
 } from '../lib/api';
 
 function toSlug(text) {
@@ -35,6 +36,7 @@ export default function ProductsTab({ products, categories, onRefresh }) {
   const [editingProduct, setEditingProduct] = useState(null); // null | 'new' | productObj
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
 
   // State tambah opsi saat edit produk
@@ -334,13 +336,48 @@ export default function ProductsTab({ products, categories, onRefresh }) {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-ink">URL Gambar (opsional)</label>
-                <input
-                  type="text"
-                  value={form.imageUrl}
-                  onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
-                  className="mt-1 w-full rounded-lg border border-line bg-cream/40 px-3 py-2 text-sm"
-                />
+                <label className="block text-xs font-bold text-ink">Foto Produk (opsional)</label>
+                <div className="mt-1 flex items-center gap-3">
+                  {form.imageUrl && (
+                    <img
+                      src={form.imageUrl}
+                      alt={form.name || 'Preview'}
+                      className="h-14 w-14 shrink-0 rounded-lg border border-line object-cover"
+                    />
+                  )}
+                  <div className="flex-1 space-y-1.5">
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      disabled={uploading}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setUploading(true);
+                        setError('');
+                        try {
+                          const url = await uploadProductImage(file);
+                          setForm((prev) => ({ ...prev, imageUrl: url }));
+                        } catch (err) {
+                          setError(err.message || 'Upload foto gagal');
+                        } finally {
+                          setUploading(false);
+                        }
+                      }}
+                      className="block w-full text-xs text-ink-soft file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-ink file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-white hover:file:bg-terracotta-deep"
+                    />
+                    {uploading && (
+                      <p className="text-[11px] font-bold text-terracotta-deep">Mengunggah foto...</p>
+                    )}
+                    <input
+                      type="text"
+                      placeholder="atau tempel URL gambar..."
+                      value={form.imageUrl}
+                      onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+                      className="w-full rounded-lg border border-line bg-cream/40 px-3 py-1.5 text-xs"
+                    />
+                  </div>
+                </div>
               </div>
 
               <label className="flex items-center gap-2 text-sm font-semibold text-ink">
